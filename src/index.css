@@ -8,47 +8,47 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Motor Sale Brand Colors */
-    --background: 248 250 252; /* #F8FAFC */
-    --foreground: 207 39% 29%; /* #0F172A */
+    /* Motor Sale Pastel Colors */
+    --background: 210 40% 98%; /* #F8F9FF */
+    --foreground: 215 25% 27%; /* #3B4A5C */
 
     --card: 0 0% 100%; /* #FFFFFF */
-    --card-foreground: 207 39% 29%;
+    --card-foreground: 215 25% 27%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 207 39% 29%;
+    --popover-foreground: 215 25% 27%;
 
-    /* Primary: Motor Sale Red */
-    --primary: 352 95% 45%; /* #E30613 */
+    /* Primary: Soft Coral */
+    --primary: 14 78% 75%; /* #F4A688 */
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 352 95% 35%; /* #B3050F */
+    --primary-hover: 14 78% 65%; /* #F19970 */
 
-    /* Secondary: Graphite Black */
-    --secondary: 0 0% 11%; /* #1B1B1B */
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary: Soft Lavender */
+    --secondary: 250 30% 85%; /* #D6D6E7 */
+    --secondary-foreground: 215 25% 27%;
 
     /* Text Colors */
-    --text-primary: 207 39% 29%; /* #0F172A */
-    --text-secondary: 207 15% 49%; /* #64748B */
+    --text-primary: 215 25% 27%; /* #3B4A5C */
+    --text-secondary: 215 15% 50%; /* #7A8699 */
 
     /* Backgrounds */
-    --background-light: 248 250 252; /* #F8FAFC */
-    --background-dark: 0 0% 7%; /* #111111 */
+    --background-light: 210 40% 98%; /* #F8F9FF */
+    --background-dark: 220 15% 15%; /* #1F2937 */
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 207 15% 49%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 15% 50%;
 
-    --accent: 352 95% 45%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 200 50% 85%; /* #B8E0D2 */
+    --accent-foreground: 215 25% 27%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 60% 75%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 352 95% 45%;
+    --border: 220 15% 90%;
+    --input: 220 15% 92%;
+    --ring: 14 78% 75%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -124,13 +124,13 @@ All colors MUST be HSL.
     color: hsl(var(--text-secondary));
   }
 
-  /* Motor Sale Custom Gradients */
+  /* Motor Sale Soft Gradients */
   .gradient-primary {
     background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)));
   }
 
-  .gradient-dark {
-    background: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--background-dark)));
+  .gradient-soft {
+    background: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--secondary)));
   }
 
   /* Hover Effects */
