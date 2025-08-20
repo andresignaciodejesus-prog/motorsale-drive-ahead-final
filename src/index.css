@@ -18,18 +18,18 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 27%;
 
-    /* Primary: Soft Coral */
-    --primary: 14 78% 75%; /* #F4A688 */
+    /* Primary: Green CTA (like ✅ emoji) */
+    --primary: 142 71% 45%; /* #22C55E - Green like ✅ emoji */
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 14 78% 65%; /* #F19970 */
+    --primary-hover: 142 71% 40%; /* #1DB954 - Darker green on hover */
 
-    /* Secondary: Soft Lavender */
-    --secondary: 250 30% 85%; /* #D6D6E7 */
-    --secondary-foreground: 215 25% 27%;
+    /* Secondary: Dark background for Footer */
+    --secondary: 220 15% 15%; /* #1F2937 - Dark background */
+    --secondary-foreground: 0 0% 100%; /* #FFFFFF - White text */
 
     /* Text Colors */
-    --text-primary: 215 25% 27%; /* #3B4A5C */
-    --text-secondary: 215 15% 50%; /* #7A8699 */
+    --text-primary: 215 25% 20%; /* #2A3441 - Darker for better contrast */
+    --text-secondary: 215 20% 40%; /* #5A6B7D - Darker for better contrast */
 
     /* Backgrounds */
     --background-light: 210 40% 98%; /* #F8F9FF */
@@ -124,9 +124,10 @@ All colors MUST be HSL.
     color: hsl(var(--text-secondary));
   }
 
-  /* Motor Sale Soft Gradients */
+  /* Motor Sale Green Gradients (like ✅ emoji) */
   .gradient-primary {
     background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)));
+    box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.3);
   }
 
   .gradient-soft {

@@ -16,7 +16,7 @@ import {
   Handshake,
   FileCheck
 } from 'lucide-react';
-import consultationImage from '@/assets/consultation.jpg';
+import imagenRecomendacion from '@/assets/imagen-recomendacion.jpg';
 
 const Home = () => {
   // Mock data for featured vehicles
@@ -185,9 +185,9 @@ const Home = () => {
 
             <div className="relative">
               <img 
-                src={consultationImage}
-                alt="Consultoría Motor Sale"
-                className="rounded-xl shadow-2xl w-full"
+                src={imagenRecomendacion}
+                alt="Cliente feliz con su nuevo auto - Motor Sale"
+                className="rounded-xl shadow-2xl w-full h-80 object-cover object-left-center"
               />
               <div className="absolute -bottom-6 -left-6 bg-primary text-primary-foreground p-6 rounded-xl">
                 <div className="text-2xl font-bold">100%</div>
@@ -236,12 +236,12 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-secondary text-secondary-foreground">
+      <section className="py-16 bg-gradient-to-r from-background-dark to-background-dark/95">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white">
             ¿Listo para tu próximo auto?
           </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-100 mb-8 max-w-2xl mx-auto">
             Encuentra el vehículo perfecto para ti o vende el tuyo de forma segura con Motor Sale
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -250,9 +250,8 @@ const Home = () => {
             </Button>
             <Button 
               asChild 
-              variant="outline" 
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-secondary"
+              className="gradient-primary hover:scale-105 transition-transform"
             >
               <NavLink to="/contacto">Contactar Ahora</NavLink>
             </Button>

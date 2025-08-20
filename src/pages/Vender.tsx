@@ -192,7 +192,7 @@ const Vender = () => {
                           id="telefono"
                           value={formData.telefono}
                           onChange={(e) => handleInputChange('telefono', e.target.value)}
-                          placeholder="+56 9 1234 5678"
+                          placeholder="+56 9 3445 5147"
                           required
                         />
                       </div>
@@ -322,7 +322,7 @@ const Vender = () => {
               <CardContent className="space-y-3">
                 <div className="flex items-center space-x-3">
                   <Phone className="h-5 w-5 text-primary" />
-                  <span>+56 9 1234 5678</span>
+                  <span>+56 9 3445 5147</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <Mail className="h-5 w-5 text-primary" />

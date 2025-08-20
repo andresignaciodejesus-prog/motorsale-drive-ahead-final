@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Shield, Clock, CheckCircle } from 'lucide-react';
-import heroImage from '@/assets/hero-cars.jpg';
+import heroImage from '@/assets/hero-background.png';
 
 const Hero = () => {
   return (
@@ -56,9 +56,8 @@ const Hero = () => {
             
             <Button 
               asChild
-              variant="outline"
               size="lg"
-              className="border-white text-white hover:bg-white hover:text-background-dark text-lg px-8"
+              className="gradient-primary hover:scale-105 transition-transform text-lg px-8"
             >
               <NavLink to="/vender">Vender mi Auto</NavLink>
             </Button>

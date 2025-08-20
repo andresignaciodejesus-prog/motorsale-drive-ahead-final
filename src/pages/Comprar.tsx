@@ -2,100 +2,28 @@ import React, { useState, useMemo } from 'react';
 import { Search, Filter, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import VehicleCard from '@/components/VehicleCard';
+import { useVehicles } from '@/hooks/useVehicles';
 
 const Comprar = () => {
+  const { vehicles, loading, searchVehicles, getBrands, getYears } = useVehicles();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedYear, setSelectedYear] = useState('');
   const [priceRange, setPriceRange] = useState('');
   const [sortBy, setSortBy] = useState('newest');
 
-  // Mock vehicles data
-  const vehicles = [
-    {
-      id: '1',
-      image: 'https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=500&h=300&fit=crop',
-      brand: 'Toyota',
-      model: 'Corolla',
-      year: 2021,
-      price: 18500000,
-      mileage: 45000,
-      fuel: 'Gasolina',
-      location: 'Buin',
-      isNew: false
-    },
-    {
-      id: '2',
-      image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=500&h=300&fit=crop',
-      brand: 'BMW',
-      model: 'X3',
-      year: 2022,
-      price: 35000000,
-      mileage: 25000,
-      fuel: 'Gasolina',
-      location: 'Santiago',
-      isNew: true
-    },
-    {
-      id: '3',
-      image: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=500&h=300&fit=crop',
-      brand: 'Honda',
-      model: 'Civic',
-      year: 2020,
-      price: 16000000,
-      mileage: 60000,
-      fuel: 'Gasolina',
-      location: 'Buin',
-      isNew: false
-    },
-    {
-      id: '4',
-      image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=500&h=300&fit=crop',
-      brand: 'Mercedes',
-      model: 'C200',
-      year: 2019,
-      price: 28000000,
-      mileage: 80000,
-      fuel: 'Gasolina',
-      location: 'Santiago',
-      isNew: false
-    },
-    {
-      id: '5',
-      image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=500&h=300&fit=crop',
-      brand: 'Hyundai',
-      model: 'Tucson',
-      year: 2021,
-      price: 22000000,
-      mileage: 35000,
-      fuel: 'Gasolina',
-      location: 'Buin',
-      isNew: false
-    },
-    {
-      id: '6',
-      image: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?w=500&h=300&fit=crop',
-      brand: 'Audi',
-      model: 'A4',
-      year: 2020,
-      price: 32000000,
-      mileage: 50000,
-      fuel: 'Gasolina',
-      location: 'Santiago',
-      isNew: false
-    }
-  ];
-
-  // Get unique brands for filter
-  const brands = [...new Set(vehicles.map(v => v.brand))].sort();
-  const years = [...new Set(vehicles.map(v => v.year))].sort((a, b) => b - a);
+  // Get available vehicles only
+  const availableVehicles = vehicles.filter(v => v.status === 'available');
+  
+  // Get unique brands and years from available vehicles
+  const brands = getBrands();
+  const years = getYears();
 
   // Filter vehicles based on criteria
   const filteredVehicles = useMemo(() => {
-    let filtered = vehicles.filter(vehicle => {
+    let filtered = availableVehicles.filter(vehicle => {
       const matchesSearch = searchTerm === '' || 
         `${vehicle.brand} ${vehicle.model}`.toLowerCase().includes(searchTerm.toLowerCase());
       
@@ -136,7 +64,7 @@ const Comprar = () => {
       default:
         return filtered;
     }
-  }, [vehicles, searchTerm, selectedBrand, selectedYear, priceRange, sortBy]);
+  }, [availableVehicles, searchTerm, selectedBrand, selectedYear, priceRange, sortBy]);
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -147,6 +75,17 @@ const Comprar = () => {
   };
 
   const activeFiltersCount = [selectedBrand, selectedYear, priceRange].filter(f => f !== '').length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-20 pb-16 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-text-secondary">Cargando vehículos...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-20 pb-16">
@@ -177,56 +116,52 @@ const Comprar = () => {
 
           {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-              <SelectTrigger>
-                <SelectValue placeholder="Marca" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">Todas las marcas</SelectItem>
-                {brands.map(brand => (
-                  <SelectItem key={brand} value={brand}>{brand}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <select 
+              value={selectedBrand} 
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <option value="">Todas las marcas</option>
+              {brands.map(brand => (
+                <option key={brand} value={brand}>{brand}</option>
+              ))}
+            </select>
 
-            <Select value={selectedYear} onValueChange={setSelectedYear}>
-              <SelectTrigger>
-                <SelectValue placeholder="Año" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">Todos los años</SelectItem>
-                {years.map(year => (
-                  <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <select 
+              value={selectedYear} 
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <option value="">Todos los años</option>
+              {years.map(year => (
+                <option key={year} value={year.toString()}>{year}</option>
+              ))}
+            </select>
 
-            <Select value={priceRange} onValueChange={setPriceRange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Rango de precio" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">Todos los precios</SelectItem>
-                <SelectItem value="under-15">Menos de $15M</SelectItem>
-                <SelectItem value="15-25">$15M - $25M</SelectItem>
-                <SelectItem value="25-35">$25M - $35M</SelectItem>
-                <SelectItem value="over-35">Más de $35M</SelectItem>
-              </SelectContent>
-            </Select>
+            <select 
+              value={priceRange} 
+              onChange={(e) => setPriceRange(e.target.value)}
+              className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <option value="">Todos los precios</option>
+              <option value="under-15">Menos de $15M</option>
+              <option value="15-25">$15M - $25M</option>
+              <option value="25-35">$25M - $35M</option>
+              <option value="over-35">Más de $35M</option>
+            </select>
 
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger>
-                <SelectValue placeholder="Ordenar por" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Más recientes</SelectItem>
-                <SelectItem value="price-low">Precio: menor a mayor</SelectItem>
-                <SelectItem value="price-high">Precio: mayor a menor</SelectItem>
-                <SelectItem value="year-new">Año: más nuevo</SelectItem>
-                <SelectItem value="year-old">Año: más antiguo</SelectItem>
-                <SelectItem value="mileage-low">Menor kilometraje</SelectItem>
-              </SelectContent>
-            </Select>
+            <select 
+              value={sortBy} 
+              onChange={(e) => setSortBy(e.target.value)}
+              className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <option value="newest">Más recientes</option>
+              <option value="price-low">Precio: menor a mayor</option>
+              <option value="price-high">Precio: mayor a menor</option>
+              <option value="year-new">Año: más nuevo</option>
+              <option value="year-old">Año: más antiguo</option>
+              <option value="mileage-low">Menor kilometraje</option>
+            </select>
           </div>
 
           {/* Active Filters & Actions */}

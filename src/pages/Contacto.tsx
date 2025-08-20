@@ -75,7 +75,7 @@ const Contacto = () => {
     {
       icon: Phone,
       title: 'Teléfono',
-      details: ['+56 9 1234 5678', '+56 2 2345 6789'],
+      details: ['+56 9 3445 5147'],
       action: 'Llamar ahora'
     },
     {
@@ -87,7 +87,7 @@ const Contacto = () => {
     {
       icon: MessageCircle,
       title: 'WhatsApp',
-      details: ['+56 9 1234 5678'],
+      details: ['+56 9 3445 5147'],
       action: 'Chatear en WhatsApp'
     }
   ];
@@ -164,7 +164,7 @@ const Contacto = () => {
                         id="telefono"
                         value={formData.telefono}
                         onChange={(e) => handleInputChange('telefono', e.target.value)}
-                        placeholder="+56 9 1234 5678"
+                        placeholder="+56 9 3445 5147"
                       />
                     </div>
                     <div>
@@ -267,7 +267,7 @@ const Contacto = () => {
                   <Button 
                     variant="outline"
                     className="w-full border-white text-white hover:bg-white hover:text-primary"
-                    onClick={() => window.open('tel:+56912345678')}
+                    onClick={() => window.open('tel:+56934455147')}
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     Llamar Ahora

@@ -20,13 +20,12 @@ const Header = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
-          <NavLink to="/" className="flex items-center space-x-3">
+          <NavLink to="/" className="flex items-center">
             <img 
               src={motorSaleLogo} 
               alt="Motor Sale Logo" 
-              className="h-8 lg:h-10 w-auto"
+              className="h-16 lg:h-20 w-auto"
             />
-            <span className="text-xl lg:text-2xl font-bold text-primary">Motor Sale</span>
           </NavLink>
 
           {/* Desktop Navigation */}
@@ -49,11 +48,11 @@ const Header = () => {
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
             <a
-              href="tel:+56912345678"
+              href="tel:+56934455147"
               className="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors"
             >
               <Phone className="h-4 w-4" />
-              <span className="text-sm">+56 9 1234 5678</span>
+              <span className="text-sm">+56 9 3445 5147</span>
             </a>
             <Button 
               asChild
@@ -91,11 +90,11 @@ const Header = () => {
             ))}
             <div className="pt-4 border-t border-border space-y-3">
               <a
-                href="tel:+56912345678"
+                href="tel:+56934455147"
                 className="flex items-center space-x-2 text-text-secondary"
               >
                 <Phone className="h-4 w-4" />
-                <span>+56 9 1234 5678</span>
+                <span>+56 9 3445 5147</span>
               </a>
               <Button 
                 asChild

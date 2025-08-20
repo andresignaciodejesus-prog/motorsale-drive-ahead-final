@@ -5,7 +5,8 @@ import { Calendar, Gauge, Fuel } from 'lucide-react';
 
 interface VehicleCardProps {
   id: string;
-  image: string;
+  image?: string; // Keep for backward compatibility
+  mainImage?: string; // New property from inventory system
   brand: string;
   model: string;
   year: number;
@@ -19,6 +20,7 @@ interface VehicleCardProps {
 const VehicleCard: React.FC<VehicleCardProps> = ({
   id,
   image,
+  mainImage,
   brand,
   model,
   year,
@@ -28,6 +30,8 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
   location,
   isNew = false
 }) => {
+  // Use mainImage if available, fallback to image for backward compatibility
+  const vehicleImage = mainImage || image;
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('es-CL', {
       style: 'currency',
@@ -45,7 +49,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
       {/* Image */}
       <div className="relative overflow-hidden">
         <img 
-          src={image} 
+          src={vehicleImage} 
           alt={`${brand} ${model} ${year}`}
           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -55,7 +59,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
           </Badge>
         )}
         <div className="absolute top-3 right-3">
-          <Badge variant="secondary" className="bg-background-dark/80 text-white">
+          <Badge variant="secondary" className="bg-background-dark text-white border border-white/20">
             {location}
           </Badge>
         </div>

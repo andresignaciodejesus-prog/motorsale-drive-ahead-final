@@ -22,13 +22,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center">
               <img 
                 src={motorSaleLogo} 
                 alt="Motor Sale Logo" 
-                className="h-8 w-auto filter brightness-0 invert"
+                className="h-16 w-auto"
               />
-              <span className="text-xl font-bold">Motor Sale</span>
             </div>
             <p className="text-gray-300 text-sm">
               Especialistas en compra y venta de vehículos en Buin, Santiago. 
@@ -96,10 +95,10 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary flex-shrink-0" />
                 <a 
-                  href="tel:+56912345678"
+                  href="tel:+56934455147"
                   className="text-gray-300 hover:text-primary transition-colors text-sm"
                 >
-                  +56 9 1234 5678
+                  +56 9 3445 5147
                 </a>
               </div>
               <div className="flex items-center space-x-3">
@@ -157,18 +156,24 @@ const Footer = () => {
               © {currentYear} Motor Sale. Todos los derechos reservados.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a 
-                href="#" 
+              <NavLink 
+                to="/terminos-condiciones" 
                 className="text-gray-400 hover:text-primary transition-colors text-sm"
               >
                 Términos y Condiciones
-              </a>
-              <a 
-                href="#" 
+              </NavLink>
+              <NavLink 
+                to="/politicas-privacidad" 
                 className="text-gray-400 hover:text-primary transition-colors text-sm"
               >
                 Política de Privacidad
-              </a>
+              </NavLink>
+              <NavLink 
+                to="/admin" 
+                className="text-gray-400 hover:text-primary transition-colors text-sm"
+              >
+                Admin
+              </NavLink>
             </div>
           </div>
         </div>
