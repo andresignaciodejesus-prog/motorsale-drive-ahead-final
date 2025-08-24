@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear LocalStorage - Motor Sale</title>
+</head>
+<body>
+    <h1>Limpiar Datos Locales</h1>
+    <button onclick="clearAll()">Limpiar Todo el LocalStorage</button>
+    <button onclick="clearVehicles()">Limpiar Solo Vehículos</button>
+    <button onclick="clearContact()">Limpiar Solo Contacto</button>
+    <div id="status"></div>
+    
+    <script>
+        function clearAll() {
+            localStorage.clear();
+            document.getElementById('status').innerHTML = '<p style="color: green;">✅ Todo el localStorage limpiado</p>';
+        }
+        
+        function clearVehicles() {
+            localStorage.removeItem('motorsale_vehicles');
+            document.getElementById('status').innerHTML = '<p style="color: green;">✅ Vehículos limpiados</p>';
+        }
+        
+        function clearContact() {
+            localStorage.removeItem('motorsale_contact_info');
+            document.getElementById('status').innerHTML = '<p style="color: green;">✅ Información de contacto limpiada</p>';
+        }
+        
+        // Show current data
+        window.onload = function() {
+            const vehicles = localStorage.getItem('motorsale_vehicles');
+            const contact = localStorage.getItem('motorsale_contact_info');
+            
+            console.log('Vehículos actuales:', vehicles ? JSON.parse(vehicles) : 'No hay datos');
+            console.log('Contacto actual:', contact ? JSON.parse(contact) : 'No hay datos');
+        }
+    </script>
+</body>
+</html>
