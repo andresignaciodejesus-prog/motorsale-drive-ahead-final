@@ -33,7 +33,7 @@ const Contacto = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -49,20 +49,54 @@ const Contacto = () => {
       return;
     }
 
-    // Simulate form submission
-    toast({
-      title: "¡Mensaje enviado!",
-      description: "Te responderemos en las próximas 24 horas."
-    });
+    try {
+      console.log('Enviando datos de contacto a Make.com:', formData);
+      
+      // Send data to Make.com webhook
+      const response = await fetch('https://hook.us2.make.com/bdl03hjaq8tm6izzsnkugra1tt543yg6', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: formData.nombre,
+          email: formData.email,
+          telefono: formData.telefono || 'No especificado',
+          asunto: formData.asunto || 'Consulta general',
+          mensaje: formData.mensaje,
+          tipo_formulario: 'Contacto',
+          fecha: new Date().toISOString()
+        })
+      });
 
-    // Reset form
-    setFormData({
-      nombre: '',
-      email: '',
-      telefono: '',
-      asunto: '',
-      mensaje: ''
-    });
+      console.log('Respuesta del webhook contacto:', response.status, response.statusText);
+
+      if (response.ok) {
+        toast({
+          title: "¡Mensaje enviado exitosamente!",
+          description: "Te responderemos en las próximas 24 horas."
+        });
+
+        // Reset form
+        setFormData({
+          nombre: '',
+          email: '',
+          telefono: '',
+          asunto: '',
+          mensaje: ''
+        });
+      } else {
+        throw new Error('Error en el servidor');
+      }
+    } catch (error) {
+      console.error('Error sending contact form:', error);
+      toast({
+        title: "Error al enviar el mensaje",
+        description: "Por favor intenta nuevamente o contáctanos directamente.",
+        variant: "destructive"
+      });
+    }
   };
 
   const contactInfo = [
