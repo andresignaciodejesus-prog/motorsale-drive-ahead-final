@@ -10,7 +10,7 @@ import Testimonios from "./pages/Testimonios";
 import Contacto from "./pages/Contacto";
 import PoliticasPrivacidad from "./pages/PoliticasPrivacidad";
 import TerminosCondiciones from "./pages/TerminosCondiciones";
-import Admin from "./pages/Admin";
+import ProtectedAdmin from "./components/ProtectedAdmin";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -37,7 +37,7 @@ const App = () => (
               <Route path="/contacto" element={<Contacto />} />
               <Route path="/politicas-privacidad" element={<PoliticasPrivacidad />} />
               <Route path="/terminos-condiciones" element={<TerminosCondiciones />} />
-              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin" element={<ProtectedAdmin />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

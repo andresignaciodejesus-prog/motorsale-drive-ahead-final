@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Car, Users, MessageSquare, Phone, Mail, MapPin, Clock, Plus, Edit, Trash2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Car, 
+  Users, 
+  MessageSquare, 
+  Settings,
+  Plus,
+  Edit,
+  Trash2,
+  Save,
+  LogOut,
+  BarChart3,
+  DollarSign,
+  Eye
+} from 'lucide-react';
+import VehicleStats from '@/components/admin/VehicleStats';
+import { useVehicles } from '@/hooks/useVehicles';
+import { useTestimonials } from '@/hooks/useTestimonials';
+import { useContactInfo } from '@/hooks/useContactInfo';
 import VehicleForm from '@/components/admin/VehicleForm';
 import TestimonialForm from '@/components/admin/TestimonialForm';
 import ContactInfoForm from '@/components/admin/ContactInfoForm';
@@ -45,7 +66,11 @@ interface ContactInfo {
   hours: string;
 }
 
-const Admin = () => {
+interface AdminProps {
+  onLogout?: () => void;
+}
+
+const Admin: React.FC<AdminProps> = ({ onLogout }) => {
   const [vehicles, setVehicles] = useState<Vehicle[]>(() => {
     const saved = localStorage.getItem('motorsale_vehicles');
     return saved ? JSON.parse(saved) : [];
@@ -273,20 +298,6 @@ const Admin = () => {
                   </Card>
                 ))
               )}
-            </div>
-          </TabsContent>
-
-          {/* Testimonials Tab */}
-          <TabsContent value="testimonials" className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-text-primary">Gestión de Testimonios</h2>
-              <Button 
-                onClick={() => setShowTestimonialForm(true)}
-                className="gradient-primary"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Agregar Testimonio
-              </Button>
             </div>
 
             {showTestimonialForm && (
