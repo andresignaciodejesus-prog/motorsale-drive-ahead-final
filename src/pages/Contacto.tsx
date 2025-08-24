@@ -53,7 +53,7 @@ const Contacto = () => {
       console.log('Enviando datos de contacto a Make.com:', formData);
       
       // Send data to Make.com webhook
-      const response = await fetch('https://hook.us2.make.com/bdl03hjaq8tm6izzsnkugra1tt543yg6', {
+      const response = await fetch('https://hook.us2.make.com/a8trpudax86qcme09mwpfg1krvavmf6w', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
