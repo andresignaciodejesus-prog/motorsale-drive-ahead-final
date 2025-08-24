@@ -93,9 +93,61 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
   const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
 
-  const handleSaveVehicle = (vehicleData: Omit<Vehicle, 'id' | 'createdAt'>) => {
+  // Form states
+  const [vehicleForm, setVehicleForm] = useState({
+    brand: '', model: '', year: 2024, price: 0, mileage: 0,
+    fuel: '', transmission: '', condition: '', type: '', location: '',
+    image: '', description: '', features: [], available: true
+  });
+  
+  const [testimonialForm, setTestimonialForm] = useState({
+    name: '', location: '', rating: 5, comment: '', date: new Date().toISOString().split('T')[0]
+  });
+  
+  const [contactForm, setContactForm] = useState(contactInfo);
+
+  // Initialize forms when editing
+  const handleEditVehicle = (vehicle: Vehicle) => {
+    setEditingVehicle(vehicle);
+    setVehicleForm({
+      brand: vehicle.brand,
+      model: vehicle.model,
+      year: vehicle.year,
+      price: vehicle.price,
+      mileage: vehicle.mileage,
+      fuel: vehicle.fuel,
+      transmission: vehicle.transmission,
+      condition: vehicle.condition,
+      type: vehicle.type,
+      location: vehicle.location,
+      image: vehicle.image,
+      description: vehicle.description,
+      features: vehicle.features,
+      available: vehicle.available
+    });
+    setShowVehicleForm(true);
+  };
+
+  const handleEditTestimonial = (testimonial: Testimonial) => {
+    setEditingTestimonial(testimonial);
+    setTestimonialForm({
+      name: testimonial.name,
+      location: testimonial.location,
+      rating: testimonial.rating,
+      comment: testimonial.comment,
+      date: testimonial.date
+    });
+    setShowTestimonialForm(true);
+  };
+
+  const handleEditContact = () => {
+    setContactForm(contactInfo);
+    setShowContactForm(true);
+  };
+
+  const handleSaveVehicle = () => {
     const newVehicle: Vehicle = {
-      ...vehicleData,
+      ...vehicleForm,
       id: editingVehicle?.id || Date.now().toString(),
       createdAt: editingVehicle?.createdAt || new Date().toISOString(),
     };
@@ -111,6 +163,11 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     localStorage.setItem('motorsale_vehicles', JSON.stringify(updatedVehicles));
     setEditingVehicle(null);
     setShowVehicleForm(false);
+    setVehicleForm({
+      brand: '', model: '', year: 2024, price: 0, mileage: 0,
+      fuel: '', transmission: '', condition: '', type: '', location: '',
+      image: '', description: '', features: [], available: true
+    });
   };
 
   const handleDeleteVehicle = (id: string) => {
@@ -119,9 +176,9 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     localStorage.setItem('motorsale_vehicles', JSON.stringify(updatedVehicles));
   };
 
-  const handleSaveTestimonial = (testimonialData: Omit<Testimonial, 'id'>) => {
+  const handleSaveTestimonial = () => {
     const newTestimonial: Testimonial = {
-      ...testimonialData,
+      ...testimonialForm,
       id: editingTestimonial?.id || Date.now().toString(),
     };
 
@@ -136,6 +193,9 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     localStorage.setItem('motorsale_testimonials', JSON.stringify(updatedTestimonials));
     setEditingTestimonial(null);
     setShowTestimonialForm(false);
+    setTestimonialForm({
+      name: '', location: '', rating: 5, comment: '', date: new Date().toISOString().split('T')[0]
+    });
   };
 
   const handleDeleteTestimonial = (id: string) => {
@@ -144,9 +204,9 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     localStorage.setItem('motorsale_testimonials', JSON.stringify(updatedTestimonials));
   };
 
-  const handleSaveContactInfo = (newContactInfo: ContactInfo) => {
-    setContactInfo(newContactInfo);
-    localStorage.setItem('motorsale_contact', JSON.stringify(newContactInfo));
+  const handleSaveContactInfo = () => {
+    setContactInfo(contactForm);
+    localStorage.setItem('motorsale_contact', JSON.stringify(contactForm));
     setShowContactForm(false);
   };
 
@@ -207,16 +267,146 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="brand">Marca</Label>
-                        <Input id="brand" placeholder="Toyota" />
+                        <Input 
+                          id="brand" 
+                          value={vehicleForm.brand}
+                          onChange={(e) => setVehicleForm({...vehicleForm, brand: e.target.value})}
+                          placeholder="Toyota" 
+                        />
                       </div>
                       <div>
                         <Label htmlFor="model">Modelo</Label>
-                        <Input id="model" placeholder="Corolla" />
+                        <Input 
+                          id="model" 
+                          value={vehicleForm.model}
+                          onChange={(e) => setVehicleForm({...vehicleForm, model: e.target.value})}
+                          placeholder="Corolla" 
+                        />
                       </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="year">Año</Label>
+                        <Input 
+                          id="year" 
+                          type="number"
+                          value={vehicleForm.year}
+                          onChange={(e) => setVehicleForm({...vehicleForm, year: parseInt(e.target.value)})}
+                          placeholder="2024" 
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="price">Precio (CLP)</Label>
+                        <Input 
+                          id="price" 
+                          type="number"
+                          value={vehicleForm.price}
+                          onChange={(e) => setVehicleForm({...vehicleForm, price: parseInt(e.target.value)})}
+                          placeholder="15000000" 
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="mileage">Kilometraje</Label>
+                        <Input 
+                          id="mileage" 
+                          type="number"
+                          value={vehicleForm.mileage}
+                          onChange={(e) => setVehicleForm({...vehicleForm, mileage: parseInt(e.target.value)})}
+                          placeholder="50000" 
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="fuel">Combustible</Label>
+                        <Select value={vehicleForm.fuel} onValueChange={(value) => setVehicleForm({...vehicleForm, fuel: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccionar" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Gasolina">Gasolina</SelectItem>
+                            <SelectItem value="Diesel">Diesel</SelectItem>
+                            <SelectItem value="Híbrido">Híbrido</SelectItem>
+                            <SelectItem value="Eléctrico">Eléctrico</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="transmission">Transmisión</Label>
+                        <Select value={vehicleForm.transmission} onValueChange={(value) => setVehicleForm({...vehicleForm, transmission: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccionar" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Manual">Manual</SelectItem>
+                            <SelectItem value="Automática">Automática</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="condition">Estado</Label>
+                        <Select value={vehicleForm.condition} onValueChange={(value) => setVehicleForm({...vehicleForm, condition: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccionar" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Nuevo">Nuevo</SelectItem>
+                            <SelectItem value="Usado">Usado</SelectItem>
+                            <SelectItem value="Semi-nuevo">Semi-nuevo</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="type">Tipo</Label>
+                        <Select value={vehicleForm.type} onValueChange={(value) => setVehicleForm({...vehicleForm, type: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccionar" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Sedán">Sedán</SelectItem>
+                            <SelectItem value="SUV">SUV</SelectItem>
+                            <SelectItem value="Hatchback">Hatchback</SelectItem>
+                            <SelectItem value="Pickup">Pickup</SelectItem>
+                            <SelectItem value="Deportivo">Deportivo</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="location">Ubicación</Label>
+                        <Input 
+                          id="location" 
+                          value={vehicleForm.location}
+                          onChange={(e) => setVehicleForm({...vehicleForm, location: e.target.value})}
+                          placeholder="Santiago, Chile" 
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="image">URL de Imagen</Label>
+                      <Input 
+                        id="image" 
+                        value={vehicleForm.image}
+                        onChange={(e) => setVehicleForm({...vehicleForm, image: e.target.value})}
+                        placeholder="https://ejemplo.com/imagen.jpg" 
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="description">Descripción</Label>
+                      <Textarea 
+                        id="description" 
+                        value={vehicleForm.description}
+                        onChange={(e) => setVehicleForm({...vehicleForm, description: e.target.value})}
+                        placeholder="Descripción del vehículo..." 
+                        rows={3}
+                      />
                     </div>
                     <div className="flex gap-2">
                       <Button onClick={() => setShowVehicleForm(false)}>Cancelar</Button>
-                      <Button className="gradient-primary">Guardar</Button>
+                      <Button onClick={handleSaveVehicle} className="gradient-primary">Guardar</Button>
                     </div>
                   </div>
                 </CardContent>
@@ -285,10 +475,7 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => {
-                                setEditingVehicle(vehicle);
-                                setShowVehicleForm(true);
-                              }}
+                              onClick={() => handleEditVehicle(vehicle)}
                             >
                               <Edit className="h-4 w-4 mr-2" />
                               Editar
@@ -393,17 +580,65 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">Nombre</Label>
-                      <Input id="name" placeholder="Juan Pérez" />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="name">Nombre</Label>
+                        <Input 
+                          id="name" 
+                          value={testimonialForm.name}
+                          onChange={(e) => setTestimonialForm({...testimonialForm, name: e.target.value})}
+                          placeholder="Juan Pérez" 
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="location">Ubicación</Label>
+                        <Input 
+                          id="location" 
+                          value={testimonialForm.location}
+                          onChange={(e) => setTestimonialForm({...testimonialForm, location: e.target.value})}
+                          placeholder="Santiago, Chile" 
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="rating">Calificación</Label>
+                        <Select value={testimonialForm.rating.toString()} onValueChange={(value) => setTestimonialForm({...testimonialForm, rating: parseInt(value)})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Seleccionar" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="5">5 Estrellas</SelectItem>
+                            <SelectItem value="4">4 Estrellas</SelectItem>
+                            <SelectItem value="3">3 Estrellas</SelectItem>
+                            <SelectItem value="2">2 Estrellas</SelectItem>
+                            <SelectItem value="1">1 Estrella</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="date">Fecha</Label>
+                        <Input 
+                          id="date" 
+                          type="date"
+                          value={testimonialForm.date}
+                          onChange={(e) => setTestimonialForm({...testimonialForm, date: e.target.value})}
+                        />
+                      </div>
                     </div>
                     <div>
                       <Label htmlFor="comment">Comentario</Label>
-                      <Textarea id="comment" placeholder="Excelente servicio..." />
+                      <Textarea 
+                        id="comment" 
+                        value={testimonialForm.comment}
+                        onChange={(e) => setTestimonialForm({...testimonialForm, comment: e.target.value})}
+                        placeholder="Excelente servicio..." 
+                        rows={4}
+                      />
                     </div>
                     <div className="flex gap-2">
                       <Button onClick={() => setShowTestimonialForm(false)}>Cancelar</Button>
-                      <Button className="gradient-primary">Guardar</Button>
+                      <Button onClick={handleSaveTestimonial} className="gradient-primary">Guardar</Button>
                     </div>
                   </div>
                 </CardContent>
@@ -477,7 +712,7 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-text-primary">Información de Contacto</h2>
               <Button 
-                onClick={() => setShowContactForm(true)}
+                onClick={handleEditContact}
                 className="gradient-primary"
               >
                 <Edit className="h-4 w-4 mr-2" />
@@ -495,24 +730,40 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="phone">Teléfono</Label>
-                        <Input id="phone" defaultValue={contactInfo.phone} />
+                        <Input 
+                          id="phone" 
+                          value={contactForm.phone}
+                          onChange={(e) => setContactForm({...contactForm, phone: e.target.value})}
+                        />
                       </div>
                       <div>
                         <Label htmlFor="email">Email</Label>
-                        <Input id="email" defaultValue={contactInfo.email} />
+                        <Input 
+                          id="email" 
+                          value={contactForm.email}
+                          onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
+                        />
                       </div>
                     </div>
                     <div>
                       <Label htmlFor="address">Dirección</Label>
-                      <Input id="address" defaultValue={contactInfo.address} />
+                      <Input 
+                        id="address" 
+                        value={contactForm.address}
+                        onChange={(e) => setContactForm({...contactForm, address: e.target.value})}
+                      />
                     </div>
                     <div>
                       <Label htmlFor="hours">Horarios</Label>
-                      <Input id="hours" defaultValue={contactInfo.hours} />
+                      <Input 
+                        id="hours" 
+                        value={contactForm.hours}
+                        onChange={(e) => setContactForm({...contactForm, hours: e.target.value})}
+                      />
                     </div>
                     <div className="flex gap-2">
                       <Button onClick={() => setShowContactForm(false)}>Cancelar</Button>
-                      <Button className="gradient-primary">Guardar</Button>
+                      <Button onClick={handleSaveContactInfo} className="gradient-primary">Guardar</Button>
                     </div>
                   </div>
                 </CardContent>
