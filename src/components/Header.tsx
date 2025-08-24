@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X, Phone, MessageCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import motorSaleLogo from '@/assets/motor-sale-logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Static contact info
+  const contactInfo = {
+    phone: '+56977587288'
+  };
 
   const navLinks = [
     { to: '/', label: 'Inicio' },

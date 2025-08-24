@@ -1,8 +1,7 @@
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
 
 const WhatsAppFloat = () => {
-  const whatsappNumber = "+56934455147";
+  const whatsappNumber = "+56977587288";
   const message = "Hola, me interesa conocer más sobre sus servicios de Motor Sale";
   
   const handleWhatsAppClick = () => {

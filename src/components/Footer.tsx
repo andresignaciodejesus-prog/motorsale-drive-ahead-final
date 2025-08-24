@@ -14,6 +14,13 @@ import motorSaleLogo from '@/assets/motor-sale-logo.png';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  
+  // Static contact info
+  const contactInfo = {
+    phone: '+56977587288',
+    email: 'motorsale.cl@gmail.com',
+    address: 'camino el arpa 825 lote 127, buin'
+  };
 
   return (
     <footer className="bg-secondary text-secondary-foreground">

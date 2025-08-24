@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import { Car, Users, MessageSquare, Phone, Mail, MapPin, Clock, Plus, Edit, Trash2 } from 'lucide-react';
 import VehicleForm from '@/components/admin/VehicleForm';
 import TestimonialForm from '@/components/admin/TestimonialForm';
-import ContactInfoForm from '@/components/admin/ContactInfoForm';
 import VehicleStats from '@/components/admin/VehicleStats';
 
 interface Vehicle {
@@ -150,10 +149,9 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="vehicles" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="vehicles">Vehículos</TabsTrigger>
             <TabsTrigger value="testimonials">Testimonios</TabsTrigger>
-            <TabsTrigger value="contact">Contacto</TabsTrigger>
             <TabsTrigger value="stats">Estadísticas</TabsTrigger>
           </TabsList>
 
@@ -369,69 +367,6 @@ const Admin = () => {
             </div>
           </TabsContent>
 
-          {/* Contact Tab */}
-          <TabsContent value="contact" className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-text-primary">Información de Contacto</h2>
-              <Button 
-                onClick={() => setShowContactForm(true)}
-                className="gradient-primary"
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Editar Información
-              </Button>
-            </div>
-
-            {showContactForm && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Editar Información de Contacto</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ContactInfoForm
-                    contactInfo={contactInfo}
-                    onSave={handleSaveContactInfo}
-                    onCancel={() => setShowContactForm(false)}
-                  />
-                </CardContent>
-              </Card>
-            )}
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="flex items-center space-x-3">
-                    <Phone className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="text-sm text-text-secondary">Teléfono</p>
-                      <p className="font-medium text-text-primary">{contactInfo.phone}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Mail className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="text-sm text-text-secondary">Email</p>
-                      <p className="font-medium text-text-primary">{contactInfo.email}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="text-sm text-text-secondary">Dirección</p>
-                      <p className="font-medium text-text-primary">{contactInfo.address}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <Clock className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="text-sm text-text-secondary">Horarios</p>
-                      <p className="font-medium text-text-primary">{contactInfo.hours}</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           {/* Stats Tab */}
           <TabsContent value="stats">
