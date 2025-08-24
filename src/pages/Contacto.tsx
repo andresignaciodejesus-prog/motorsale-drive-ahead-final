@@ -19,6 +19,7 @@ import {
 
 const Contacto = () => {
   const { toast } = useToast();
+  const { contactInfo: contact, getWhatsAppLink } = useContactInfo();
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
