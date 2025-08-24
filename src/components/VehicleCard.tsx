@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Gauge, Fuel } from 'lucide-react';
@@ -30,6 +31,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
   location,
   isNew = false
 }) => {
+  const navigate = useNavigate();
   // Use mainImage if available, fallback to image for backward compatibility
   const vehicleImage = mainImage || image;
   const formatPrice = (price: number) => {
@@ -94,6 +96,7 @@ const VehicleCard: React.FC<VehicleCardProps> = ({
 
         {/* CTA */}
         <Button 
+          onClick={() => navigate(`/vehiculo/${id}`)}
           className="w-full hover:scale-105 transition-transform"
           variant="outline"
         >
