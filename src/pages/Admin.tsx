@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,16 +19,12 @@ import {
   LogOut,
   BarChart3,
   DollarSign,
-  Eye
+  Eye,
+  Phone,
+  Mail,
+  MapPin,
+  Clock
 } from 'lucide-react';
-import VehicleStats from '@/components/admin/VehicleStats';
-import { useVehicles } from '@/hooks/useVehicles';
-import { useTestimonials } from '@/hooks/useTestimonials';
-import { useContactInfo } from '@/hooks/useContactInfo';
-import VehicleForm from '@/components/admin/VehicleForm';
-import TestimonialForm from '@/components/admin/TestimonialForm';
-import ContactInfoForm from '@/components/admin/ContactInfoForm';
-import VehicleStats from '@/components/admin/VehicleStats';
 
 interface Vehicle {
   id: string;
@@ -91,11 +87,11 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     };
   });
 
-  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
-  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [showVehicleForm, setShowVehicleForm] = useState(false);
   const [showTestimonialForm, setShowTestimonialForm] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
 
   const handleSaveVehicle = (vehicleData: Omit<Vehicle, 'id' | 'createdAt'>) => {
     const newVehicle: Vehicle = {
@@ -184,6 +180,12 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
 
           {/* Vehicles Tab */}
           <TabsContent value="vehicles" className="space-y-6">
+            <div className="flex justify-end mb-4">
+              <Button onClick={onLogout} variant="outline">
+                <LogOut className="h-4 w-4 mr-2" />
+                Cerrar Sesión
+              </Button>
+            </div>
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-text-primary">Gestión de Vehículos</h2>
               <Button 
@@ -201,14 +203,22 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                   <CardTitle>{editingVehicle ? 'Editar Vehículo' : 'Nuevo Vehículo'}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <VehicleForm
-                    vehicle={editingVehicle}
-                    onSave={handleSaveVehicle}
-                    onCancel={() => {
-                      setShowVehicleForm(false);
-                      setEditingVehicle(null);
-                    }}
-                  />
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="brand">Marca</Label>
+                        <Input id="brand" placeholder="Toyota" />
+                      </div>
+                      <div>
+                        <Label htmlFor="model">Modelo</Label>
+                        <Input id="model" placeholder="Corolla" />
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={() => setShowVehicleForm(false)}>Cancelar</Button>
+                      <Button className="gradient-primary">Guardar</Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -300,20 +310,102 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
               )}
             </div>
 
+
+            <div className="grid gap-4">
+              {testimonials.length === 0 ? (
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
+                    <p className="text-text-secondary text-center">
+                      No hay testimonios registrados. Agrega el primer testimonio para comenzar.
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                testimonials.map((testimonial) => (
+                  <Card key={testimonial.id}>
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="font-semibold text-text-primary">{testimonial.name}</h3>
+                          <p className="text-sm text-text-secondary">{testimonial.location}</p>
+                          <div className="flex items-center mt-1">
+                            {[...Array(5)].map((_, i) => (
+                              <span
+                                key={i}
+                                className={`text-sm ${
+                                  i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'
+                                }`}
+                              >
+                                ★
+                              </span>
+                            ))}
+                            <span className="ml-2 text-sm text-text-secondary">
+                              {testimonial.date}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setEditingTestimonial(testimonial);
+                              setShowTestimonialForm(true);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteTestimonial(testimonial.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="text-text-secondary">{testimonial.comment}</p>
+                    </CardContent>
+                  </Card>
+                ))
+              )}
+            </div>
+          </TabsContent>
+
+          {/* Testimonials Tab */}
+          <TabsContent value="testimonials" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-semibold text-text-primary">Gestión de Testimonios</h2>
+              <Button 
+                onClick={() => setShowTestimonialForm(true)}
+                className="gradient-primary"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Agregar Testimonio
+              </Button>
+            </div>
+
             {showTestimonialForm && (
               <Card>
                 <CardHeader>
                   <CardTitle>{editingTestimonial ? 'Editar Testimonio' : 'Nuevo Testimonio'}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <TestimonialForm
-                    testimonial={editingTestimonial}
-                    onSave={handleSaveTestimonial}
-                    onCancel={() => {
-                      setShowTestimonialForm(false);
-                      setEditingTestimonial(null);
-                    }}
-                  />
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="name">Nombre</Label>
+                      <Input id="name" placeholder="Juan Pérez" />
+                    </div>
+                    <div>
+                      <Label htmlFor="comment">Comentario</Label>
+                      <Textarea id="comment" placeholder="Excelente servicio..." />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={() => setShowTestimonialForm(false)}>Cancelar</Button>
+                      <Button className="gradient-primary">Guardar</Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -399,11 +491,30 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                   <CardTitle>Editar Información de Contacto</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ContactInfoForm
-                    contactInfo={contactInfo}
-                    onSave={handleSaveContactInfo}
-                    onCancel={() => setShowContactForm(false)}
-                  />
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="phone">Teléfono</Label>
+                        <Input id="phone" defaultValue={contactInfo.phone} />
+                      </div>
+                      <div>
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" defaultValue={contactInfo.email} />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="address">Dirección</Label>
+                      <Input id="address" defaultValue={contactInfo.address} />
+                    </div>
+                    <div>
+                      <Label htmlFor="hours">Horarios</Label>
+                      <Input id="hours" defaultValue={contactInfo.hours} />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={() => setShowContactForm(false)}>Cancelar</Button>
+                      <Button className="gradient-primary">Guardar</Button>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -446,7 +557,41 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
 
           {/* Stats Tab */}
           <TabsContent value="stats">
-            <VehicleStats vehicles={vehicles} testimonials={testimonials} />
+            <div className="grid gap-6 md:grid-cols-3">
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-2">
+                    <Car className="h-8 w-8 text-primary" />
+                    <div>
+                      <p className="text-2xl font-bold">{vehicles.length}</p>
+                      <p className="text-sm text-text-secondary">Vehículos</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-2">
+                    <MessageSquare className="h-8 w-8 text-primary" />
+                    <div>
+                      <p className="text-2xl font-bold">{testimonials.length}</p>
+                      <p className="text-sm text-text-secondary">Testimonios</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-2">
+                    <Eye className="h-8 w-8 text-primary" />
+                    <div>
+                      <p className="text-2xl font-bold">{vehicles.filter(v => v.available).length}</p>
+                      <p className="text-sm text-text-secondary">Disponibles</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
