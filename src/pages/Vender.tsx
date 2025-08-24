@@ -59,7 +59,7 @@ const Vender = () => {
 
     try {
       // Send data to Make.com webhook
-      const response = await fetch('https://hook.us2.make.com/2emylxcq4ak6gf6apdlaavn9hen9f9v', {
+      const response = await fetch('https://hook.us2.make.com/2emylxcq4ak6gf6apdlaavn9hen9f9vi', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
