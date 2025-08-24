@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useVehicles } from '@/hooks/useVehicles';
+import { Vehicle as VehicleType } from '@/services/vehicleService';
 import { 
   Car, 
   Users, 
@@ -27,24 +28,7 @@ import {
   Clock
 } from 'lucide-react';
 
-interface Vehicle {
-  id: string;
-  brand: string;
-  model: string;
-  year: number;
-  price: number;
-  mileage: number;
-  fuel: string;
-  transmission: string;
-  condition: string;
-  type: string;
-  location: string;
-  image: string;
-  description: string;
-  features: string[];
-  available: boolean;
-  createdAt: string;
-}
+// Using Vehicle type from service instead of local interface
 
 interface Testimonial {
   id: string;
@@ -88,15 +72,19 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
   const [showVehicleForm, setShowVehicleForm] = useState(false);
   const [showTestimonialForm, setShowTestimonialForm] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
-  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [editingVehicle, setEditingVehicle] = useState<VehicleType | null>(null);
   const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
 
   // Form states
   const [vehicleForm, setVehicleForm] = useState({
     brand: '', model: '', year: 2024, price: 0, mileage: 0,
-    fuel: 'Gasolina', transmission: 'Manual', condition: 'Excelente', 
-    bodyType: 'Sedán', location: '', mainImage: '', description: '', 
-    features: [], status: 'available', isNew: false, isFeatured: false,
+    fuel: 'Gasolina' as 'Gasolina' | 'Diesel' | 'Híbrido' | 'Eléctrico', 
+    transmission: 'Manual' as 'Manual' | 'Automática', 
+    condition: 'Excelente' as 'Excelente' | 'Muy Bueno' | 'Bueno' | 'Regular', 
+    bodyType: 'Sedán' as 'Sedán' | 'SUV' | 'Hatchback' | 'Pickup' | 'Convertible' | 'Coupé', 
+    location: '', mainImage: '', description: '', 
+    features: [], status: 'available' as 'available' | 'sold' | 'reserved' | 'maintenance', 
+    isNew: false, isFeatured: false,
     engine: '', doors: 4, seats: 5, color: '', tags: []
   });
   
@@ -171,9 +159,13 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
       setShowVehicleForm(false);
       setVehicleForm({
         brand: '', model: '', year: 2024, price: 0, mileage: 0,
-        fuel: 'Gasolina', transmission: 'Manual', condition: 'Excelente', 
-        bodyType: 'Sedán', location: '', mainImage: '', description: '', 
-        features: [], status: 'available', isNew: false, isFeatured: false,
+        fuel: 'Gasolina' as 'Gasolina' | 'Diesel' | 'Híbrido' | 'Eléctrico', 
+        transmission: 'Manual' as 'Manual' | 'Automática', 
+        condition: 'Excelente' as 'Excelente' | 'Muy Bueno' | 'Bueno' | 'Regular', 
+        bodyType: 'Sedán' as 'Sedán' | 'SUV' | 'Hatchback' | 'Pickup' | 'Convertible' | 'Coupé', 
+        location: '', mainImage: '', description: '', 
+        features: [], status: 'available' as 'available' | 'sold' | 'reserved' | 'maintenance', 
+        isNew: false, isFeatured: false,
         engine: '', doors: 4, seats: 5, color: '', tags: []
       });
     } catch (error) {
@@ -365,17 +357,10 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                             <SelectValue placeholder="Seleccionar" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="Nuevo">Nuevo</SelectItem>
-                            <SelectItem value="Usado">Usado</SelectItem>
-                            <SelectItem value="Semi-nuevo">Semi-nuevo</SelectItem>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Sedán">Sedán</SelectItem>
-                            <SelectItem value="SUV">SUV</SelectItem>
-                            <SelectItem value="Hatchback">Hatchback</SelectItem>
-                            <SelectItem value="Pickup">Pickup</SelectItem>
-                            <SelectItem value="Coupé">Coupé</SelectItem>
-                            <SelectItem value="Convertible">Convertible</SelectItem>
+                            <SelectItem value="Excelente">Excelente</SelectItem>
+                            <SelectItem value="Muy Bueno">Muy Bueno</SelectItem>
+                            <SelectItem value="Bueno">Bueno</SelectItem>
+                            <SelectItem value="Regular">Regular</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -434,7 +419,7 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                       <div className="flex flex-col lg:flex-row gap-6">
                         <div className="lg:w-1/3">
                           <img
-                            src={vehicle.image}
+                            src={vehicle.mainImage}
                             alt={`${vehicle.brand} ${vehicle.model}`}
                             className="w-full h-48 object-cover rounded-lg"
                           />
@@ -450,8 +435,8 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                               </p>
                             </div>
                             <div className="flex gap-2">
-                              <Badge variant={vehicle.available ? "default" : "secondary"}>
-                                {vehicle.available ? "Disponible" : "No Disponible"}
+                              <Badge variant={vehicle.status === 'available' ? "default" : "secondary"}>
+                                {vehicle.status === 'available' ? "Disponible" : "No Disponible"}
                               </Badge>
                             </div>
                           </div>
@@ -840,7 +825,7 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                   <div className="flex items-center space-x-2">
                     <Eye className="h-8 w-8 text-primary" />
                     <div>
-                      <p className="text-2xl font-bold">{vehicles.filter(v => v.available).length}</p>
+                      <p className="text-2xl font-bold">{vehicles.filter(v => v.status === 'available').length}</p>
                       <p className="text-sm text-text-secondary">Disponibles</p>
                     </div>
                   </div>
