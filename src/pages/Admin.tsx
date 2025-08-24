@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useVehicles } from '@/hooks/useVehicles';
 import { 
   Car, 
   Users, 
@@ -67,10 +68,7 @@ interface AdminProps {
 }
 
 const Admin: React.FC<AdminProps> = ({ onLogout }) => {
-  const [vehicles, setVehicles] = useState<Vehicle[]>(() => {
-    const saved = localStorage.getItem('motorsale_vehicles');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const { vehicles, addVehicle, updateVehicle, deleteVehicle } = useVehicles();
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
     const saved = localStorage.getItem('motorsale_testimonials');
@@ -96,8 +94,10 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
   // Form states
   const [vehicleForm, setVehicleForm] = useState({
     brand: '', model: '', year: 2024, price: 0, mileage: 0,
-    fuel: '', transmission: '', condition: '', type: '', location: '',
-    image: '', description: '', features: [], available: true
+    fuel: 'Gasolina', transmission: 'Manual', condition: 'Excelente', 
+    bodyType: 'Sedán', location: '', mainImage: '', description: '', 
+    features: [], status: 'available', isNew: false, isFeatured: false,
+    engine: '', doors: 4, seats: 5, color: '', tags: []
   });
   
   const [testimonialForm, setTestimonialForm] = useState({
@@ -118,12 +118,19 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
       fuel: vehicle.fuel,
       transmission: vehicle.transmission,
       condition: vehicle.condition,
-      type: vehicle.type,
+      bodyType: vehicle.bodyType,
       location: vehicle.location,
-      image: vehicle.image,
+      mainImage: vehicle.mainImage,
       description: vehicle.description,
       features: vehicle.features,
-      available: vehicle.available
+      status: vehicle.status,
+      isNew: vehicle.isNew,
+      isFeatured: vehicle.isFeatured,
+      engine: vehicle.engine,
+      doors: vehicle.doors,
+      seats: vehicle.seats,
+      color: vehicle.color,
+      tags: vehicle.tags
     });
     setShowVehicleForm(true);
   };
@@ -145,35 +152,41 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     setShowContactForm(true);
   };
 
-  const handleSaveVehicle = () => {
-    const newVehicle: Vehicle = {
-      ...vehicleForm,
-      id: editingVehicle?.id || Date.now().toString(),
-      createdAt: editingVehicle?.createdAt || new Date().toISOString(),
-    };
+  const handleSaveVehicle = async () => {
+    try {
+      const vehicleData = {
+        ...vehicleForm,
+        images: vehicleForm.mainImage ? [vehicleForm.mainImage] : [],
+        dealerName: 'Motor Sale',
+        dealerPhone: contactInfo.phone
+      };
 
-    let updatedVehicles;
-    if (editingVehicle) {
-      updatedVehicles = vehicles.map(v => v.id === editingVehicle.id ? newVehicle : v);
-    } else {
-      updatedVehicles = [...vehicles, newVehicle];
+      if (editingVehicle) {
+        await updateVehicle(editingVehicle.id, vehicleData);
+      } else {
+        await addVehicle(vehicleData);
+      }
+
+      setEditingVehicle(null);
+      setShowVehicleForm(false);
+      setVehicleForm({
+        brand: '', model: '', year: 2024, price: 0, mileage: 0,
+        fuel: 'Gasolina', transmission: 'Manual', condition: 'Excelente', 
+        bodyType: 'Sedán', location: '', mainImage: '', description: '', 
+        features: [], status: 'available', isNew: false, isFeatured: false,
+        engine: '', doors: 4, seats: 5, color: '', tags: []
+      });
+    } catch (error) {
+      console.error('Error saving vehicle:', error);
     }
-
-    setVehicles(updatedVehicles);
-    localStorage.setItem('motorsale_vehicles', JSON.stringify(updatedVehicles));
-    setEditingVehicle(null);
-    setShowVehicleForm(false);
-    setVehicleForm({
-      brand: '', model: '', year: 2024, price: 0, mileage: 0,
-      fuel: '', transmission: '', condition: '', type: '', location: '',
-      image: '', description: '', features: [], available: true
-    });
   };
 
-  const handleDeleteVehicle = (id: string) => {
-    const updatedVehicles = vehicles.filter(v => v.id !== id);
-    setVehicles(updatedVehicles);
-    localStorage.setItem('motorsale_vehicles', JSON.stringify(updatedVehicles));
+  const handleDeleteVehicle = async (id: string) => {
+    try {
+      await deleteVehicle(id);
+    } catch (error) {
+      console.error('Error deleting vehicle:', error);
+    }
   };
 
   const handleSaveTestimonial = () => {
@@ -355,23 +368,14 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                             <SelectItem value="Nuevo">Nuevo</SelectItem>
                             <SelectItem value="Usado">Usado</SelectItem>
                             <SelectItem value="Semi-nuevo">Semi-nuevo</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="type">Tipo</Label>
-                        <Select value={vehicleForm.type} onValueChange={(value) => setVehicleForm({...vehicleForm, type: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="Sedán">Sedán</SelectItem>
                             <SelectItem value="SUV">SUV</SelectItem>
                             <SelectItem value="Hatchback">Hatchback</SelectItem>
                             <SelectItem value="Pickup">Pickup</SelectItem>
-                            <SelectItem value="Deportivo">Deportivo</SelectItem>
+                            <SelectItem value="Coupé">Coupé</SelectItem>
+                            <SelectItem value="Convertible">Convertible</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -386,11 +390,11 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                       </div>
                     </div>
                     <div>
-                      <Label htmlFor="image">URL de Imagen</Label>
+                      <Label htmlFor="mainImage">URL de Imagen</Label>
                       <Input 
-                        id="image" 
-                        value={vehicleForm.image}
-                        onChange={(e) => setVehicleForm({...vehicleForm, image: e.target.value})}
+                        id="mainImage" 
+                        value={vehicleForm.mainImage}
+                        onChange={(e) => setVehicleForm({...vehicleForm, mainImage: e.target.value})}
                         placeholder="https://ejemplo.com/imagen.jpg" 
                       />
                     </div>
