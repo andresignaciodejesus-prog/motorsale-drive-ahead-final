@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X, Phone, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useContactInfo } from '@/hooks/useContactInfo';
 import motorSaleLogo from '@/assets/motor-sale-logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { contactInfo } = useContactInfo();
 
   const navLinks = [
     { to: '/', label: 'Inicio' },
@@ -50,11 +48,11 @@ const Header = () => {
           {/* Desktop CTAs */}
           <div className="hidden lg:flex items-center space-x-4">
             <a
-              href={`tel:${contactInfo.phone}`}
+              href="tel:+56934455147"
               className="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors"
             >
               <Phone className="h-4 w-4" />
-              <span className="text-sm">{contactInfo.phone}</span>
+              <span className="text-sm">+56 9 3445 5147</span>
             </a>
             <Button 
               asChild
@@ -92,11 +90,11 @@ const Header = () => {
             ))}
             <div className="pt-4 border-t border-border space-y-3">
               <a
-                href={`tel:${contactInfo.phone}`}
+                href="tel:+56934455147"
                 className="flex items-center space-x-2 text-text-secondary"
               >
                 <Phone className="h-4 w-4" />
-                <span>{contactInfo.phone}</span>
+                <span>+56 9 3445 5147</span>
               </a>
               <Button 
                 asChild

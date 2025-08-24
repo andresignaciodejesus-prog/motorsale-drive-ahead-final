@@ -1,34 +1,32 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useVehicles } from '@/hooks/useVehicles';
-import { Vehicle as VehicleType } from '@/services/vehicleService';
-import { 
-  Car, 
-  Users, 
-  MessageSquare, 
-  Settings,
-  Plus,
-  Edit,
-  Trash2,
-  Save,
-  LogOut,
-  BarChart3,
-  DollarSign,
-  Eye,
-  Phone,
-  Mail,
-  MapPin,
-  Clock
-} from 'lucide-react';
+import { Car, Users, MessageSquare, Phone, Mail, MapPin, Clock, Plus, Edit, Trash2 } from 'lucide-react';
+import VehicleForm from '@/components/admin/VehicleForm';
+import TestimonialForm from '@/components/admin/TestimonialForm';
+import ContactInfoForm from '@/components/admin/ContactInfoForm';
+import VehicleStats from '@/components/admin/VehicleStats';
 
-// Using Vehicle type from service instead of local interface
+interface Vehicle {
+  id: string;
+  brand: string;
+  model: string;
+  year: number;
+  price: number;
+  mileage: number;
+  fuel: string;
+  transmission: string;
+  condition: string;
+  type: string;
+  location: string;
+  image: string;
+  description: string;
+  features: string[];
+  available: boolean;
+  createdAt: string;
+}
 
 interface Testimonial {
   id: string;
@@ -47,12 +45,11 @@ interface ContactInfo {
   hours: string;
 }
 
-interface AdminProps {
-  onLogout?: () => void;
-}
-
-const Admin: React.FC<AdminProps> = ({ onLogout }) => {
-  const { vehicles, addVehicle, updateVehicle, deleteVehicle } = useVehicles();
+const Admin = () => {
+  const [vehicles, setVehicles] = useState<Vehicle[]>(() => {
+    const saved = localStorage.getItem('motorsale_vehicles');
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
     const saved = localStorage.getItem('motorsale_testimonials');
@@ -69,121 +66,41 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     };
   });
 
+  const [editingVehicle, setEditingVehicle] = useState<Vehicle | null>(null);
+  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
   const [showVehicleForm, setShowVehicleForm] = useState(false);
   const [showTestimonialForm, setShowTestimonialForm] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
-  const [editingVehicle, setEditingVehicle] = useState<VehicleType | null>(null);
-  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null);
 
-  // Form states
-  const [vehicleForm, setVehicleForm] = useState({
-    brand: '', model: '', year: 2024, price: 0, mileage: 0,
-    fuel: 'Gasolina' as 'Gasolina' | 'Diesel' | 'Híbrido' | 'Eléctrico', 
-    transmission: 'Manual' as 'Manual' | 'Automática', 
-    condition: 'Excelente' as 'Excelente' | 'Muy Bueno' | 'Bueno' | 'Regular', 
-    bodyType: 'Sedán' as 'Sedán' | 'SUV' | 'Hatchback' | 'Pickup' | 'Convertible' | 'Coupé', 
-    location: '', mainImage: '', description: '', 
-    features: [], status: 'available' as 'available' | 'sold' | 'reserved' | 'maintenance', 
-    isNew: false, isFeatured: false,
-    engine: '', doors: 4, seats: 5, color: '', tags: []
-  });
-  
-  const [testimonialForm, setTestimonialForm] = useState({
-    name: '', location: '', rating: 5, comment: '', date: new Date().toISOString().split('T')[0]
-  });
-  
-  const [contactForm, setContactForm] = useState(contactInfo);
+  const handleSaveVehicle = (vehicleData: Omit<Vehicle, 'id' | 'createdAt'>) => {
+    const newVehicle: Vehicle = {
+      ...vehicleData,
+      id: editingVehicle?.id || Date.now().toString(),
+      createdAt: editingVehicle?.createdAt || new Date().toISOString(),
+    };
 
-  // Initialize forms when editing
-  const handleEditVehicle = (vehicle: Vehicle) => {
-    setEditingVehicle(vehicle);
-    setVehicleForm({
-      brand: vehicle.brand,
-      model: vehicle.model,
-      year: vehicle.year,
-      price: vehicle.price,
-      mileage: vehicle.mileage,
-      fuel: vehicle.fuel,
-      transmission: vehicle.transmission,
-      condition: vehicle.condition,
-      bodyType: vehicle.bodyType,
-      location: vehicle.location,
-      mainImage: vehicle.mainImage,
-      description: vehicle.description,
-      features: vehicle.features,
-      status: vehicle.status,
-      isNew: vehicle.isNew,
-      isFeatured: vehicle.isFeatured,
-      engine: vehicle.engine,
-      doors: vehicle.doors,
-      seats: vehicle.seats,
-      color: vehicle.color,
-      tags: vehicle.tags
-    });
-    setShowVehicleForm(true);
-  };
-
-  const handleEditTestimonial = (testimonial: Testimonial) => {
-    setEditingTestimonial(testimonial);
-    setTestimonialForm({
-      name: testimonial.name,
-      location: testimonial.location,
-      rating: testimonial.rating,
-      comment: testimonial.comment,
-      date: testimonial.date
-    });
-    setShowTestimonialForm(true);
-  };
-
-  const handleEditContact = () => {
-    setContactForm(contactInfo);
-    setShowContactForm(true);
-  };
-
-  const handleSaveVehicle = async () => {
-    try {
-      const vehicleData = {
-        ...vehicleForm,
-        images: vehicleForm.mainImage ? [vehicleForm.mainImage] : [],
-        dealerName: 'Motor Sale',
-        dealerPhone: contactInfo.phone
-      };
-
-      if (editingVehicle) {
-        await updateVehicle(editingVehicle.id, vehicleData);
-      } else {
-        await addVehicle(vehicleData);
-      }
-
-      setEditingVehicle(null);
-      setShowVehicleForm(false);
-      setVehicleForm({
-        brand: '', model: '', year: 2024, price: 0, mileage: 0,
-        fuel: 'Gasolina' as 'Gasolina' | 'Diesel' | 'Híbrido' | 'Eléctrico', 
-        transmission: 'Manual' as 'Manual' | 'Automática', 
-        condition: 'Excelente' as 'Excelente' | 'Muy Bueno' | 'Bueno' | 'Regular', 
-        bodyType: 'Sedán' as 'Sedán' | 'SUV' | 'Hatchback' | 'Pickup' | 'Convertible' | 'Coupé', 
-        location: '', mainImage: '', description: '', 
-        features: [], status: 'available' as 'available' | 'sold' | 'reserved' | 'maintenance', 
-        isNew: false, isFeatured: false,
-        engine: '', doors: 4, seats: 5, color: '', tags: []
-      });
-    } catch (error) {
-      console.error('Error saving vehicle:', error);
+    let updatedVehicles;
+    if (editingVehicle) {
+      updatedVehicles = vehicles.map(v => v.id === editingVehicle.id ? newVehicle : v);
+    } else {
+      updatedVehicles = [...vehicles, newVehicle];
     }
+
+    setVehicles(updatedVehicles);
+    localStorage.setItem('motorsale_vehicles', JSON.stringify(updatedVehicles));
+    setEditingVehicle(null);
+    setShowVehicleForm(false);
   };
 
-  const handleDeleteVehicle = async (id: string) => {
-    try {
-      await deleteVehicle(id);
-    } catch (error) {
-      console.error('Error deleting vehicle:', error);
-    }
+  const handleDeleteVehicle = (id: string) => {
+    const updatedVehicles = vehicles.filter(v => v.id !== id);
+    setVehicles(updatedVehicles);
+    localStorage.setItem('motorsale_vehicles', JSON.stringify(updatedVehicles));
   };
 
-  const handleSaveTestimonial = () => {
+  const handleSaveTestimonial = (testimonialData: Omit<Testimonial, 'id'>) => {
     const newTestimonial: Testimonial = {
-      ...testimonialForm,
+      ...testimonialData,
       id: editingTestimonial?.id || Date.now().toString(),
     };
 
@@ -198,9 +115,6 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     localStorage.setItem('motorsale_testimonials', JSON.stringify(updatedTestimonials));
     setEditingTestimonial(null);
     setShowTestimonialForm(false);
-    setTestimonialForm({
-      name: '', location: '', rating: 5, comment: '', date: new Date().toISOString().split('T')[0]
-    });
   };
 
   const handleDeleteTestimonial = (id: string) => {
@@ -209,9 +123,9 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
     localStorage.setItem('motorsale_testimonials', JSON.stringify(updatedTestimonials));
   };
 
-  const handleSaveContactInfo = () => {
-    setContactInfo(contactForm);
-    localStorage.setItem('motorsale_contact', JSON.stringify(contactForm));
+  const handleSaveContactInfo = (newContactInfo: ContactInfo) => {
+    setContactInfo(newContactInfo);
+    localStorage.setItem('motorsale_contact', JSON.stringify(newContactInfo));
     setShowContactForm(false);
   };
 
@@ -245,12 +159,6 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
 
           {/* Vehicles Tab */}
           <TabsContent value="vehicles" className="space-y-6">
-            <div className="flex justify-end mb-4">
-              <Button onClick={onLogout} variant="outline">
-                <LogOut className="h-4 w-4 mr-2" />
-                Cerrar Sesión
-              </Button>
-            </div>
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-text-primary">Gestión de Vehículos</h2>
               <Button 
@@ -268,136 +176,14 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                   <CardTitle>{editingVehicle ? 'Editar Vehículo' : 'Nuevo Vehículo'}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="brand">Marca</Label>
-                        <Input 
-                          id="brand" 
-                          value={vehicleForm.brand}
-                          onChange={(e) => setVehicleForm({...vehicleForm, brand: e.target.value})}
-                          placeholder="Toyota" 
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="model">Modelo</Label>
-                        <Input 
-                          id="model" 
-                          value={vehicleForm.model}
-                          onChange={(e) => setVehicleForm({...vehicleForm, model: e.target.value})}
-                          placeholder="Corolla" 
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="year">Año</Label>
-                        <Input 
-                          id="year" 
-                          type="number"
-                          value={vehicleForm.year}
-                          onChange={(e) => setVehicleForm({...vehicleForm, year: parseInt(e.target.value)})}
-                          placeholder="2024" 
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="price">Precio (CLP)</Label>
-                        <Input 
-                          id="price" 
-                          type="number"
-                          value={vehicleForm.price}
-                          onChange={(e) => setVehicleForm({...vehicleForm, price: parseInt(e.target.value)})}
-                          placeholder="15000000" 
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="mileage">Kilometraje</Label>
-                        <Input 
-                          id="mileage" 
-                          type="number"
-                          value={vehicleForm.mileage}
-                          onChange={(e) => setVehicleForm({...vehicleForm, mileage: parseInt(e.target.value)})}
-                          placeholder="50000" 
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="fuel">Combustible</Label>
-                        <Select value={vehicleForm.fuel} onValueChange={(value) => setVehicleForm({...vehicleForm, fuel: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Gasolina">Gasolina</SelectItem>
-                            <SelectItem value="Diesel">Diesel</SelectItem>
-                            <SelectItem value="Híbrido">Híbrido</SelectItem>
-                            <SelectItem value="Eléctrico">Eléctrico</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="transmission">Transmisión</Label>
-                        <Select value={vehicleForm.transmission} onValueChange={(value) => setVehicleForm({...vehicleForm, transmission: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Manual">Manual</SelectItem>
-                            <SelectItem value="Automática">Automática</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="condition">Estado</Label>
-                        <Select value={vehicleForm.condition} onValueChange={(value) => setVehicleForm({...vehicleForm, condition: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Excelente">Excelente</SelectItem>
-                            <SelectItem value="Muy Bueno">Muy Bueno</SelectItem>
-                            <SelectItem value="Bueno">Bueno</SelectItem>
-                            <SelectItem value="Regular">Regular</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="location">Ubicación</Label>
-                        <Input 
-                          id="location" 
-                          value={vehicleForm.location}
-                          onChange={(e) => setVehicleForm({...vehicleForm, location: e.target.value})}
-                          placeholder="Santiago, Chile" 
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="mainImage">URL de Imagen</Label>
-                      <Input 
-                        id="mainImage" 
-                        value={vehicleForm.mainImage}
-                        onChange={(e) => setVehicleForm({...vehicleForm, mainImage: e.target.value})}
-                        placeholder="https://ejemplo.com/imagen.jpg" 
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="description">Descripción</Label>
-                      <Textarea 
-                        id="description" 
-                        value={vehicleForm.description}
-                        onChange={(e) => setVehicleForm({...vehicleForm, description: e.target.value})}
-                        placeholder="Descripción del vehículo..." 
-                        rows={3}
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button onClick={() => setShowVehicleForm(false)}>Cancelar</Button>
-                      <Button onClick={handleSaveVehicle} className="gradient-primary">Guardar</Button>
-                    </div>
-                  </div>
+                  <VehicleForm
+                    vehicle={editingVehicle}
+                    onSave={handleSaveVehicle}
+                    onCancel={() => {
+                      setShowVehicleForm(false);
+                      setEditingVehicle(null);
+                    }}
+                  />
                 </CardContent>
               </Card>
             )}
@@ -419,7 +205,7 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                       <div className="flex flex-col lg:flex-row gap-6">
                         <div className="lg:w-1/3">
                           <img
-                            src={vehicle.mainImage}
+                            src={vehicle.image}
                             alt={`${vehicle.brand} ${vehicle.model}`}
                             className="w-full h-48 object-cover rounded-lg"
                           />
@@ -435,8 +221,8 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                               </p>
                             </div>
                             <div className="flex gap-2">
-                              <Badge variant={vehicle.status === 'available' ? "default" : "secondary"}>
-                                {vehicle.status === 'available' ? "Disponible" : "No Disponible"}
+                              <Badge variant={vehicle.available ? "default" : "secondary"}>
+                                {vehicle.available ? "Disponible" : "No Disponible"}
                               </Badge>
                             </div>
                           </div>
@@ -464,7 +250,10 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleEditVehicle(vehicle)}
+                              onClick={() => {
+                                setEditingVehicle(vehicle);
+                                setShowVehicleForm(true);
+                              }}
                             >
                               <Edit className="h-4 w-4 mr-2" />
                               Editar
@@ -480,68 +269,6 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                           </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-
-
-            <div className="grid gap-4">
-              {testimonials.length === 0 ? (
-                <Card>
-                  <CardContent className="flex flex-col items-center justify-center py-12">
-                    <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
-                    <p className="text-text-secondary text-center">
-                      No hay testimonios registrados. Agrega el primer testimonio para comenzar.
-                    </p>
-                  </CardContent>
-                </Card>
-              ) : (
-                testimonials.map((testimonial) => (
-                  <Card key={testimonial.id}>
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="font-semibold text-text-primary">{testimonial.name}</h3>
-                          <p className="text-sm text-text-secondary">{testimonial.location}</p>
-                          <div className="flex items-center mt-1">
-                            {[...Array(5)].map((_, i) => (
-                              <span
-                                key={i}
-                                className={`text-sm ${
-                                  i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'
-                                }`}
-                              >
-                                ★
-                              </span>
-                            ))}
-                            <span className="ml-2 text-sm text-text-secondary">
-                              {testimonial.date}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setEditingTestimonial(testimonial);
-                              setShowTestimonialForm(true);
-                            }}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDeleteTestimonial(testimonial.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      <p className="text-text-secondary">{testimonial.comment}</p>
                     </CardContent>
                   </Card>
                 ))
@@ -568,68 +295,14 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                   <CardTitle>{editingTestimonial ? 'Editar Testimonio' : 'Nuevo Testimonio'}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="name">Nombre</Label>
-                        <Input 
-                          id="name" 
-                          value={testimonialForm.name}
-                          onChange={(e) => setTestimonialForm({...testimonialForm, name: e.target.value})}
-                          placeholder="Juan Pérez" 
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="location">Ubicación</Label>
-                        <Input 
-                          id="location" 
-                          value={testimonialForm.location}
-                          onChange={(e) => setTestimonialForm({...testimonialForm, location: e.target.value})}
-                          placeholder="Santiago, Chile" 
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="rating">Calificación</Label>
-                        <Select value={testimonialForm.rating.toString()} onValueChange={(value) => setTestimonialForm({...testimonialForm, rating: parseInt(value)})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Seleccionar" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="5">5 Estrellas</SelectItem>
-                            <SelectItem value="4">4 Estrellas</SelectItem>
-                            <SelectItem value="3">3 Estrellas</SelectItem>
-                            <SelectItem value="2">2 Estrellas</SelectItem>
-                            <SelectItem value="1">1 Estrella</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="date">Fecha</Label>
-                        <Input 
-                          id="date" 
-                          type="date"
-                          value={testimonialForm.date}
-                          onChange={(e) => setTestimonialForm({...testimonialForm, date: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="comment">Comentario</Label>
-                      <Textarea 
-                        id="comment" 
-                        value={testimonialForm.comment}
-                        onChange={(e) => setTestimonialForm({...testimonialForm, comment: e.target.value})}
-                        placeholder="Excelente servicio..." 
-                        rows={4}
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button onClick={() => setShowTestimonialForm(false)}>Cancelar</Button>
-                      <Button onClick={handleSaveTestimonial} className="gradient-primary">Guardar</Button>
-                    </div>
-                  </div>
+                  <TestimonialForm
+                    testimonial={editingTestimonial}
+                    onSave={handleSaveTestimonial}
+                    onCancel={() => {
+                      setShowTestimonialForm(false);
+                      setEditingTestimonial(null);
+                    }}
+                  />
                 </CardContent>
               </Card>
             )}
@@ -701,7 +374,7 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-semibold text-text-primary">Información de Contacto</h2>
               <Button 
-                onClick={handleEditContact}
+                onClick={() => setShowContactForm(true)}
                 className="gradient-primary"
               >
                 <Edit className="h-4 w-4 mr-2" />
@@ -715,46 +388,11 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
                   <CardTitle>Editar Información de Contacto</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="phone">Teléfono</Label>
-                        <Input 
-                          id="phone" 
-                          value={contactForm.phone}
-                          onChange={(e) => setContactForm({...contactForm, phone: e.target.value})}
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="email">Email</Label>
-                        <Input 
-                          id="email" 
-                          value={contactForm.email}
-                          onChange={(e) => setContactForm({...contactForm, email: e.target.value})}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="address">Dirección</Label>
-                      <Input 
-                        id="address" 
-                        value={contactForm.address}
-                        onChange={(e) => setContactForm({...contactForm, address: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="hours">Horarios</Label>
-                      <Input 
-                        id="hours" 
-                        value={contactForm.hours}
-                        onChange={(e) => setContactForm({...contactForm, hours: e.target.value})}
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button onClick={() => setShowContactForm(false)}>Cancelar</Button>
-                      <Button onClick={handleSaveContactInfo} className="gradient-primary">Guardar</Button>
-                    </div>
-                  </div>
+                  <ContactInfoForm
+                    contactInfo={contactInfo}
+                    onSave={handleSaveContactInfo}
+                    onCancel={() => setShowContactForm(false)}
+                  />
                 </CardContent>
               </Card>
             )}
@@ -797,41 +435,7 @@ const Admin: React.FC<AdminProps> = ({ onLogout }) => {
 
           {/* Stats Tab */}
           <TabsContent value="stats">
-            <div className="grid gap-6 md:grid-cols-3">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-2">
-                    <Car className="h-8 w-8 text-primary" />
-                    <div>
-                      <p className="text-2xl font-bold">{vehicles.length}</p>
-                      <p className="text-sm text-text-secondary">Vehículos</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-2">
-                    <MessageSquare className="h-8 w-8 text-primary" />
-                    <div>
-                      <p className="text-2xl font-bold">{testimonials.length}</p>
-                      <p className="text-sm text-text-secondary">Testimonios</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-2">
-                    <Eye className="h-8 w-8 text-primary" />
-                    <div>
-                      <p className="text-2xl font-bold">{vehicles.filter(v => v.status === 'available').length}</p>
-                      <p className="text-sm text-text-secondary">Disponibles</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            <VehicleStats vehicles={vehicles} testimonials={testimonials} />
           </TabsContent>
         </Tabs>
       </div>

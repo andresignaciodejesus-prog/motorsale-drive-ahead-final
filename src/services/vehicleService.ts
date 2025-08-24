@@ -112,10 +112,6 @@ class VehicleService {
   private saveVehicles(): void {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.vehicles));
-      // Emit event to notify components of changes
-      import('@/utils/eventBus').then(({ eventBus, EVENTS }) => {
-        eventBus.emit(EVENTS.VEHICLES_UPDATED, this.vehicles);
-      });
     } catch (error) {
       console.error('Error saving vehicles:', error);
     }

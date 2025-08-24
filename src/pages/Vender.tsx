@@ -41,7 +41,7 @@ const Vender = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -57,60 +57,23 @@ const Vender = () => {
       return;
     }
 
-    try {
-      console.log('Enviando datos a Make.com:', formData);
-      
-      // Send data to Make.com webhook
-      const response = await fetch('https://hook.us2.make.com/g8qqmg1weuoqy4lodsv2ucdijnz9ogcb', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({
-          nombre: formData.nombre,
-          telefono: formData.telefono,
-          email: formData.email,
-          marca: formData.marca,
-          modelo: formData.modelo,
-          ano: formData.ano,
-          kilometraje: formData.kilometraje || 'No especificado',
-          comentarios: formData.comentarios || 'Sin comentarios adicionales',
-          tipo_formulario: 'Venta de Vehículo',
-          fecha: new Date().toISOString()
-        })
-      });
+    // Simulate form submission
+    toast({
+      title: "¡Formulario enviado!",
+      description: "Te contactaremos pronto para evaluar tu vehículo."
+    });
 
-      console.log('Respuesta del webhook:', response.status, response.statusText);
-
-      if (response.ok) {
-        toast({
-          title: "¡Formulario enviado exitosamente!",
-          description: "Te contactaremos pronto para evaluar tu vehículo."
-        });
-
-        // Reset form
-        setFormData({
-          nombre: '',
-          telefono: '',
-          email: '',
-          marca: '',
-          modelo: '',
-          ano: '',
-          kilometraje: '',
-          comentarios: ''
-        });
-      } else {
-        throw new Error('Error en el servidor');
-      }
-    } catch (error) {
-      console.error('Error sending form:', error);
-      toast({
-        title: "Error al enviar el formulario",
-        description: "Por favor intenta nuevamente o contáctanos directamente.",
-        variant: "destructive"
-      });
-    }
+    // Reset form
+    setFormData({
+      nombre: '',
+      telefono: '',
+      email: '',
+      marca: '',
+      modelo: '',
+      ano: '',
+      kilometraje: '',
+      comentarios: ''
+    });
   };
 
   const brands = [

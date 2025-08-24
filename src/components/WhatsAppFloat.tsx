@@ -1,13 +1,12 @@
 import React from 'react';
 import { MessageCircle } from 'lucide-react';
-import { useContactInfo } from '@/hooks/useContactInfo';
 
 const WhatsAppFloat = () => {
-  const { getWhatsAppLink } = useContactInfo();
+  const whatsappNumber = "+56934455147";
   const message = "Hola, me interesa conocer más sobre sus servicios de Motor Sale";
   
   const handleWhatsAppClick = () => {
-    const url = `${getWhatsAppLink()}?text=${encodeURIComponent(message)}`;
+    const url = `https://wa.me/${whatsappNumber.replace(/\s+/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 

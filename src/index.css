@@ -1,6 +1,17 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global styles for Motor Sale */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
@@ -113,6 +124,8 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground font-inter;
+    background-color: hsl(210, 40%, 98%);
+    color: hsl(215, 25%, 27%);
   }
 
   /* Typography */
@@ -149,16 +162,20 @@ All colors MUST be HSL.
     position: fixed;
     bottom: 20px;
     right: 20px;
-    z-index: 50;
+    z-index: 1000;
     background: #25D366;
-    border-radius: 50px;
-    padding: 16px;
-    box-shadow: 0 8px 32px rgba(37, 211, 102, 0.3);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
     transition: all 0.3s ease;
   }
 
   .whatsapp-float:hover {
     transform: scale(1.1);
-    box-shadow: 0 12px 40px rgba(37, 211, 102, 0.4);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
   }
 }

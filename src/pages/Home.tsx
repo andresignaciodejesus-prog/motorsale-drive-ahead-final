@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Hero from '@/components/Hero';
 import VehicleCard from '@/components/VehicleCard';
-import { useVehicles } from '@/hooks/useVehicles';
 import { 
   Shield, 
   Clock, 
@@ -20,12 +19,45 @@ import {
 import imagenRecomendacion from '@/assets/imagen-recomendacion.jpg';
 
 const Home = () => {
-  const { vehicles } = useVehicles();
-  
-  // Get featured vehicles from real data
-  const featuredVehicles = vehicles
-    .filter(vehicle => vehicle.isFeatured && vehicle.status === 'available')
-    .slice(0, 3);
+  // Mock data for featured vehicles
+  const featuredVehicles = [
+    {
+      id: '1',
+      image: 'https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=500&h=300&fit=crop',
+      brand: 'Toyota',
+      model: 'Corolla',
+      year: 2021,
+      price: 18500000,
+      mileage: 45000,
+      fuel: 'Gasolina',
+      location: 'Buin',
+      isNew: false
+    },
+    {
+      id: '2',
+      image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=500&h=300&fit=crop',
+      brand: 'BMW',
+      model: 'X3',
+      year: 2022,
+      price: 35000000,
+      mileage: 25000,
+      fuel: 'Gasolina',
+      location: 'Santiago',
+      isNew: true
+    },
+    {
+      id: '3',
+      image: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=500&h=300&fit=crop',
+      brand: 'Honda',
+      model: 'Civic',
+      year: 2020,
+      price: 16000000,
+      mileage: 60000,
+      fuel: 'Gasolina',
+      location: 'Buin',
+      isNew: false
+    }
+  ];
 
   const testimonials = [
     {

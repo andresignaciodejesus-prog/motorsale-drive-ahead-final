@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { vehicleService, Vehicle, VehicleFilters, VehicleStats } from '@/services/vehicleService';
-import { eventBus, EVENTS } from '@/utils/eventBus';
 
 export interface UseVehiclesReturn {
   vehicles: Vehicle[];
@@ -64,17 +63,6 @@ export const useVehicles = (): UseVehiclesReturn => {
 
   useEffect(() => {
     loadVehicles();
-    
-    // Subscribe to vehicle updates from other components
-    const handleVehicleUpdate = () => {
-      loadVehicles();
-    };
-    
-    eventBus.on(EVENTS.VEHICLES_UPDATED, handleVehicleUpdate);
-    
-    return () => {
-      eventBus.off(EVENTS.VEHICLES_UPDATED, handleVehicleUpdate);
-    };
   }, [loadVehicles]);
 
   const addVehicle = useCallback(async (vehicleData: Omit<Vehicle, 'id' | 'createdAt' | 'updatedAt' | 'slug'>): Promise<Vehicle> => {

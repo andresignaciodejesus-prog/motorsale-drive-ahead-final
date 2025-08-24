@@ -78,7 +78,7 @@ export const ContactInfoForm: React.FC<ContactInfoFormProps> = ({
               id="phone"
               value={formData.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
-              placeholder="+56934455147"
+              placeholder="+56977587288"
               className="pl-10"
               required
             />
@@ -93,7 +93,7 @@ export const ContactInfoForm: React.FC<ContactInfoFormProps> = ({
               id="whatsapp"
               value={formData.whatsapp}
               onChange={(e) => handleInputChange('whatsapp', e.target.value)}
-              placeholder="+56934455147"
+              placeholder="+56977587288"
               className="pl-10"
             />
           </div>
@@ -108,7 +108,7 @@ export const ContactInfoForm: React.FC<ContactInfoFormProps> = ({
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              placeholder="contacto@motorsale.cl"
+              placeholder="motorsale.cl@gmail.com"
               className="pl-10"
               required
             />
@@ -129,7 +129,7 @@ export const ContactInfoForm: React.FC<ContactInfoFormProps> = ({
               id="address"
               value={formData.address}
               onChange={(e) => handleInputChange('address', e.target.value)}
-              placeholder="Av. Buin 1234"
+              placeholder="camino el arpa 825 lote 127"
               className="pl-10"
               required
             />
@@ -142,7 +142,7 @@ export const ContactInfoForm: React.FC<ContactInfoFormProps> = ({
             id="city"
             value={formData.city}
             onChange={(e) => handleInputChange('city', e.target.value)}
-            placeholder="Buin"
+            placeholder="buin"
             required
           />
         </div>
