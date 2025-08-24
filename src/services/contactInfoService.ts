@@ -170,9 +170,9 @@ class ContactInfoService {
   // Default Data
   private getDefaultContactInfo(): ContactInfo {
     return {
-      phone: '+56934455147',
+      phone: '+56912345678',
       email: 'contacto@motorsale.cl',
-      whatsapp: '+56934455147',
+      whatsapp: '+56912345678',
       
       address: 'Av. Buin 1234',
       city: 'Buin',
