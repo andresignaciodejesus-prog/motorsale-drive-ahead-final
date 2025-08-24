@@ -58,29 +58,30 @@ const Vender = () => {
     }
 
     try {
+      console.log('Enviando datos a Make.com:', formData);
+      
       // Send data to Make.com webhook
-      const response = await fetch('https://hook.us2.make.com/2emylxcq4ak6gf6apdlaavn9hen9f9vi', {
+      const response = await fetch('https://hook.us2.make.com/g8qqmg1weuoqy4lodsv2ucdijnz9ogcb', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
+          nombre: formData.nombre,
+          telefono: formData.telefono,
+          email: formData.email,
+          marca: formData.marca,
+          modelo: formData.modelo,
+          ano: formData.ano,
+          kilometraje: formData.kilometraje || 'No especificado',
+          comentarios: formData.comentarios || 'Sin comentarios adicionales',
           tipo_formulario: 'Venta de Vehículo',
-          fecha: new Date().toISOString(),
-          datos_contacto: {
-            nombre: formData.nombre,
-            telefono: formData.telefono,
-            email: formData.email
-          },
-          datos_vehiculo: {
-            marca: formData.marca,
-            modelo: formData.modelo,
-            ano: formData.ano,
-            kilometraje: formData.kilometraje || 'No especificado'
-          },
-          comentarios: formData.comentarios || 'Sin comentarios adicionales'
+          fecha: new Date().toISOString()
         })
       });
+
+      console.log('Respuesta del webhook:', response.status, response.statusText);
 
       if (response.ok) {
         toast({
