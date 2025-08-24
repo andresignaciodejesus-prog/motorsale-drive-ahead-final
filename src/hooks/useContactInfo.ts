@@ -63,13 +63,15 @@ export const useContactInfo = (): UseContactInfoReturn => {
       setError(null);
       const updatedInfo = contactInfoService.updateContactInfo(updates);
       setContactInfo(updatedInfo);
+      // Force immediate refresh for all components
+      loadContactInfo();
       return updatedInfo;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error updating contact info';
       setError(errorMessage);
       throw new Error(errorMessage);
     }
-  }, []);
+  }, [loadContactInfo]);
 
   const updateBusinessHours = useCallback(async (day: keyof ContactInfo['businessHours'], hours: { open: string; close: string; closed?: boolean }): Promise<ContactInfo> => {
     try {
