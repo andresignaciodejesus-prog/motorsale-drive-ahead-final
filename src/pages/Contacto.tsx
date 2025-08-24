@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useContactInfo } from '@/hooks/useContactInfo';
 import { 
   MapPin, 
   Phone, 
@@ -99,29 +100,29 @@ const Contacto = () => {
     }
   };
 
-  const contactInfo = [
+  const contactInfoDisplay = [
     {
       icon: MapPin,
       title: 'Dirección',
-      details: ['Av. Buin 1234, Buin', 'Santiago, Chile'],
-      action: 'Ver en Google Maps'
+      details: [contact.address, contact.city],
+      action: 'Ver en mapa'
     },
     {
       icon: Phone,
       title: 'Teléfono',
-      details: ['+56 9 3445 5147'],
+      details: [contact.phone],
       action: 'Llamar ahora'
     },
     {
       icon: Mail,
       title: 'Email',
-      details: ['info@motorsale.cl', 'ventas@motorsale.cl'],
+      details: [contact.email],
       action: 'Enviar email'
     },
     {
       icon: MessageCircle,
       title: 'WhatsApp',
-      details: ['+56 9 3445 5147'],
+      details: [contact.whatsapp],
       action: 'Chatear en WhatsApp'
     }
   ];
@@ -134,7 +135,7 @@ const Contacto = () => {
 
   const handleWhatsAppClick = () => {
     const message = "Hola, me interesa conocer más sobre sus servicios de Motor Sale";
-    const url = `https://wa.me/56912345678?text=${encodeURIComponent(message)}`;
+    const url = `${getWhatsAppLink()}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 
@@ -239,33 +240,33 @@ const Contacto = () => {
           {/* Contact Information */}
           <div className="space-y-6">
             {/* Contact Cards */}
-            {contactInfo.map((info, index) => (
-              <Card key={index} className="hover-lift">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <Card>
+              <CardContent className="p-6">
+                {contactInfoDisplay.map((info, index) => (
+                  <div key={index} className="text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/10 rounded-full mb-4">
                       <info.icon className="h-6 w-6 text-primary" />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-text-primary mb-2">
-                        {info.title}
-                      </h3>
-                      {info.details.map((detail, idx) => (
-                        <p key={idx} className="text-text-secondary text-sm mb-1">
-                          {detail}
-                        </p>
-                      ))}
-                      <button 
-                        className="text-primary hover:text-primary-hover text-sm font-medium mt-2"
-                        onClick={info.title === 'WhatsApp' ? handleWhatsAppClick : undefined}
-                      >
-                        {info.action}
-                      </button>
-                    </div>
+                    <h3 className="font-semibold text-text-primary mb-2">{info.title}</h3>
+                    {info.details.map((detail, detailIndex) => (
+                      <p key={detailIndex} className="text-text-secondary text-sm mb-1">
+                        {detail}
+                      </p>
+                    ))}
+                    <button 
+                      className="text-primary hover:text-primary-hover text-sm font-medium mt-2"
+                      onClick={() => {
+                        if (info.title === 'WhatsApp') handleWhatsAppClick();
+                        else if (info.title === 'Teléfono') window.open(`tel:${contact.phone}`);
+                        else if (info.title === 'Email') window.open(`mailto:${contact.email}`);
+                      }}
+                    >
+                      {info.action}
+                    </button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                ))}
+              </CardContent>
+            </Card>
 
             {/* Business Hours */}
             <Card>
@@ -301,7 +302,7 @@ const Contacto = () => {
                   <Button 
                     variant="outline"
                     className="w-full border-white text-white hover:bg-white hover:text-primary"
-                    onClick={() => window.open('tel:+56934455147')}
+                    onClick={() => window.open(`tel:${contact.phone}`)}
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     Llamar Ahora

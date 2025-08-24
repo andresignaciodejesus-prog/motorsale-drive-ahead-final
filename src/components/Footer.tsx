@@ -10,10 +10,12 @@ import {
   Twitter,
   MessageCircle 
 } from 'lucide-react';
+import { useContactInfo } from '@/hooks/useContactInfo';
 import motorSaleLogo from '@/assets/motor-sale-logo.png';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { contactInfo, getWhatsAppLink } = useContactInfo();
 
   return (
     <footer className="bg-secondary text-secondary-foreground">
@@ -95,16 +97,16 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary flex-shrink-0" />
                 <a 
-                  href="tel:+56934455147"
+                  href={`tel:${contactInfo.phone}`}
                   className="text-gray-300 hover:text-primary transition-colors text-sm"
                 >
-                  +56 9 3445 5147
+                  {contactInfo.phone}
                 </a>
               </div>
               <div className="flex items-center space-x-3">
                 <MessageCircle className="h-5 w-5 text-primary flex-shrink-0" />
                 <a 
-                  href="https://wa.me/56912345678"
+                  href={getWhatsAppLink()}
                   className="text-gray-300 hover:text-primary transition-colors text-sm"
                   target="_blank"
                   rel="noopener noreferrer"

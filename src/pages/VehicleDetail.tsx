@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useContactInfo } from '@/hooks/useContactInfo';
 import { 
   ArrowLeft, 
   Calendar, 
@@ -47,9 +48,10 @@ interface Vehicle {
   nextService?: string;
 }
 
-const VehicleDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const VehicleDetail = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { contactInfo, getWhatsAppLink } = useContactInfo();
 
   // Obtener vehículo desde localStorage
   const getVehicle = (): Vehicle | null => {
@@ -91,13 +93,12 @@ const VehicleDetail: React.FC = () => {
 
   const handleWhatsAppContact = () => {
     const message = `Hola! Me interesa el ${vehicle.brand} ${vehicle.model} ${vehicle.year} por ${formatPrice(vehicle.price)}. ¿Podrían darme más información?`;
-    const phoneNumber = '56934455147';
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    const whatsappUrl = `${getWhatsAppLink()}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handlePhoneCall = () => {
-    window.location.href = 'tel:+56934455147';
+    window.location.href = `tel:${contactInfo.phone}`;
   };
 
   return (
