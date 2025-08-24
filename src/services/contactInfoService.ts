@@ -71,6 +71,10 @@ class ContactInfoService {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(contactInfo));
       this.contactInfo = contactInfo;
+      // Emit event to notify components of changes
+      import('@/utils/eventBus').then(({ eventBus, EVENTS }) => {
+        eventBus.emit(EVENTS.CONTACT_INFO_UPDATED, contactInfo);
+      });
     } catch (error) {
       console.error('Error saving contact info:', error);
     }

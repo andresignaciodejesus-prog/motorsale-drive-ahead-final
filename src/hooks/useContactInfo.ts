@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { contactInfoService, ContactInfo } from '@/services/contactInfoService';
+import { eventBus, EVENTS } from '@/utils/eventBus';
 
 export interface UseContactInfoReturn {
   contactInfo: ContactInfo;
@@ -44,6 +45,17 @@ export const useContactInfo = (): UseContactInfoReturn => {
 
   useEffect(() => {
     loadContactInfo();
+    
+    // Subscribe to contact info updates from other components
+    const handleContactUpdate = () => {
+      loadContactInfo();
+    };
+    
+    eventBus.on(EVENTS.CONTACT_INFO_UPDATED, handleContactUpdate);
+    
+    return () => {
+      eventBus.off(EVENTS.CONTACT_INFO_UPDATED, handleContactUpdate);
+    };
   }, [loadContactInfo]);
 
   const updateContactInfo = useCallback(async (updates: Partial<ContactInfo>): Promise<ContactInfo> => {
