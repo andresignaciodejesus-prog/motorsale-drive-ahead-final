@@ -18,6 +18,18 @@ import {
 
 const Contacto = () => {
   const { toast } = useToast();
+  
+  // Static contact info
+  const contact = {
+    phone: '+56977587288',
+    email: 'motorsale.cl@gmail.com',
+    whatsapp: '+56977587288',
+    address: 'camino el arpa 825 lote 127',
+    city: 'buin'
+  };
+  
+  const getWhatsAppLink = () => `https://wa.me/56977587288`;
+
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
